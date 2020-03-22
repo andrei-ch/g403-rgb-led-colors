@@ -11,7 +11,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -694,9 +694,9 @@
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
-                            <action selector="wheelColorChanged:" target="Voe-Tx-rLC" id="WwH-Fs-poK"/>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="deviceConnected" id="dHe-ha-ce1"/>
-                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="deviceConnected" previousBinding="dHe-ha-ce1" id="oEc-Pw-aq5">
+                            <action selector="logoColorChanged:" target="Voe-Tx-rLC" id="Tbp-Py-NWv"/>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="Bkg-7v-rJf"/>
+                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="Bkg-7v-rJf" id="iVD-wo-piU">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
@@ -712,8 +712,8 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="deviceConnected" id="zLF-sS-nd8"/>
-                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="deviceConnected" previousBinding="zLF-sS-nd8" id="4uL-yE-179">
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="wCe-zi-VUf"/>
+                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="wCe-zi-VUf" id="Fqb-hE-n1a">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
@@ -729,8 +729,8 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="deviceConnected" id="3th-gR-YNP"/>
-                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="deviceConnected" previousBinding="3th-gR-YNP" id="oa8-D4-n0i">
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="0at-id-im3"/>
+                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="0at-id-im3" id="Dxe-3z-K5K">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
@@ -738,15 +738,15 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gjm-Ab-4yQ">
-                        <rect key="frame" x="20" y="101" width="203" height="16"/>
+                        <rect key="frame" x="20" y="101" width="221" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Compatible mouse not detected." id="eeT-6b-GbP">
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="No compatible mouse is plugged in." id="eeT-6b-GbP">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="deviceConnected" id="Y88-CR-qnV"/>
+                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" id="i6B-0x-p5Q"/>
                         </connections>
                     </textField>
                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="24f-57-fbm">
@@ -754,9 +754,9 @@
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
-                            <action selector="logoColorChanged:" target="Voe-Tx-rLC" id="zyu-qJ-08B"/>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="deviceConnected" id="S8T-5V-r1t"/>
-                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="deviceConnected" previousBinding="S8T-5V-r1t" id="gow-wB-yZb">
+                            <action selector="wheelColorChanged:" target="Voe-Tx-rLC" id="gML-2u-dTZ"/>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="UmZ-xp-Fi6"/>
+                            <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="UmZ-xp-Fi6" id="NLP-Ok-4J0">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>

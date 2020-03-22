@@ -12,7 +12,9 @@
 #define kLogitechVendorID 0x46d
 #define kG403ProductID 0xc08f
 
-static NSString *const kDeviceConnectedKey = @"deviceConnected";
+#define kUpdateInterval 0.15
+
+static NSString *const kConnectedKey = @"connected";
 
 typedef NS_ENUM(NSUInteger, G403LEDPosition) {
   G403LEDPositionWheel = 0,
@@ -21,37 +23,30 @@ typedef NS_ENUM(NSUInteger, G403LEDPosition) {
 
 @interface AppDelegate ()
 @property(nonatomic, weak, readwrite) IBOutlet NSWindow *window;
-@property(nonatomic, assign, readwrite) IOHIDDeviceRef device;
-@property(nonatomic, assign, readonly) BOOL deviceConnected;
+@property(nonatomic, assign, readonly) BOOL connected;
 @end
 
 @implementation AppDelegate {
   IOHIDManagerRef _deviceManager;
   IOHIDDeviceRef _device;
+  NSTimer *_timer;
+  G403LEDPosition _lastScheduledUpdatePosition;
 }
 
-@synthesize device = _device;
-
 static void DeviceMatchingCallback(void *context, IOReturn result, void *sender,
-                                   IOHIDDeviceRef IOHIDDeviceRef) {
+                                   IOHIDDeviceRef device) {
   AppDelegate *_self = (__bridge AppDelegate *)context;
-  if (_self->_device) {
-    return;
+  if (!_self->_device) {
+    [_self _setDevice:device];
   }
-  _self.device = IOHIDDeviceRef;
-  IOHIDDeviceScheduleWithRunLoop(_self->_device, CFRunLoopGetMain(),
-                                 kCFRunLoopDefaultMode);
 }
 
 static void DeviceRemovalCallback(void *context, IOReturn result, void *sender,
-                                  IOHIDDeviceRef IOHIDDeviceRef) {
+                                  IOHIDDeviceRef device) {
   AppDelegate *_self = (__bridge AppDelegate *)context;
-  if (_self->_device != IOHIDDeviceRef) {
-    return;
+  if (_self->_device == device) {
+    [_self _setDevice:NULL];
   }
-  IOHIDDeviceUnscheduleFromRunLoop(_self->_device, CFRunLoopGetMain(),
-                                   kCFRunLoopDefaultMode);
-  _self.device = NULL;
 }
 
 static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
@@ -83,38 +78,70 @@ static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
 
 #pragma mark - Properties
 
-- (IOHIDDeviceRef)device {
-  return _device;
-}
-
-- (void)setDevice:(IOHIDDeviceRef)device {
-  if (device == _device) {
-    return;
-  }
-  [self willChangeValueForKey:kDeviceConnectedKey];
-  _device = device;
-  [self didChangeValueForKey:kDeviceConnectedKey];
-}
-
-- (BOOL)deviceConnected {
+- (BOOL)connected {
   return _device != NULL;
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfDeviceConnected {
++ (BOOL)automaticallyNotifiesObserversOfConnected {
   return NO;
 }
 
 #pragma mark - Events
 
 - (IBAction)logoColorChanged:(NSColorWell *)sender {
-  [self _updateDeviceUsingColor:sender.color position:G403LEDPositionLogo];
+  [self _scheduleUpdateDeviceUsingColor:sender.color
+                               position:G403LEDPositionLogo];
 }
 
 - (IBAction)wheelColorChanged:(NSColorWell *)sender {
-  [self _updateDeviceUsingColor:sender.color position:G403LEDPositionWheel];
+  [self _scheduleUpdateDeviceUsingColor:sender.color
+                               position:G403LEDPositionWheel];
 }
 
 #pragma mark - Private
+
+- (void)_setDevice:(IOHIDDeviceRef _Nullable)device {
+  if (device == _device) {
+    return;
+  }
+
+  if (_device) {
+    IOHIDDeviceUnscheduleFromRunLoop(_device, CFRunLoopGetMain(),
+                                     kCFRunLoopDefaultMode);
+  }
+
+  [self willChangeValueForKey:kConnectedKey];
+  _device = device;
+  [self didChangeValueForKey:kConnectedKey];
+
+  if (_device) {
+    IOHIDDeviceScheduleWithRunLoop(_device, CFRunLoopGetMain(),
+                                   kCFRunLoopDefaultMode);
+  }
+}
+
+- (void)_scheduleUpdateDeviceUsingColor:(NSColor *)color
+                               position:(G403LEDPosition)position {
+  if (_timer) {
+    if (_lastScheduledUpdatePosition != position) {
+      [_timer fire];
+    }
+    [_timer invalidate];
+  }
+
+  _lastScheduledUpdatePosition = position;
+  _timer = [NSTimer timerWithTimeInterval:kUpdateInterval
+                                  repeats:NO
+                                    block:^(NSTimer *_Nonnull timer) {
+                                      [self _updateDeviceUsingColor:color
+                                                           position:position];
+                                      self->_timer = nil;
+                                    }];
+
+  const NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
+  [runLoop addTimer:_timer forMode:NSDefaultRunLoopMode];
+  [runLoop addTimer:_timer forMode:NSEventTrackingRunLoopMode];
+}
 
 - (void)_updateDeviceUsingColor:(NSColor *)color
                        position:(G403LEDPosition)position {
