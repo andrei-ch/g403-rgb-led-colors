@@ -73,7 +73,10 @@ static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
   IOHIDManagerScheduleWithRunLoop(_deviceManager, CFRunLoopGetMain(),
                                   kCFRunLoopDefaultMode);
 
-  IOHIDManagerOpen(_deviceManager, kIOHIDOptionsTypeNone);
+  IOReturn result = IOHIDManagerOpen(_deviceManager, kIOHIDOptionsTypeNone);
+  if (result != kIOReturnSuccess) {
+    NSLog(@"IOHIDManagerOpen failed with error %d\n", result);
+  }
 }
 
 #pragma mark - Properties
@@ -160,9 +163,12 @@ static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
                                   green, blue, 0x00, 0x00, 0x00,   0x00, 0x00,
                                   0x00,  0x00, 0x00, 0x00, 0x00,   0x00};
 
-  IOHIDDeviceSetReportWithCallback(_device, kIOHIDReportTypeOutput, 0x11, data,
-                                   sizeof(data), 1.0, &DeviceSetReportCallback,
-                                   (__bridge void *)self);
+  IOReturn result = IOHIDDeviceSetReportWithCallback(
+      _device, kIOHIDReportTypeOutput, 0x11, data, sizeof(data), 1.0,
+      &DeviceSetReportCallback, (__bridge void *)self);
+  if (result != kIOReturnSuccess) {
+    NSLog(@"IOHIDDeviceSetReportWithCallback failed with error %d\n", result);
+  }
 }
 
 @end
