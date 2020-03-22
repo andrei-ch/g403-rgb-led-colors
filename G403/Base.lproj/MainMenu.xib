@@ -14,6 +14,8 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
+                <outlet property="logoColorWell" destination="Snm-VA-zt3" id="C0J-JX-Eax"/>
+                <outlet property="wheelColorWell" destination="24f-57-fbm" id="AL8-G8-Mg5"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -680,7 +682,7 @@
             </items>
             <point key="canvasLocation" x="140" y="154"/>
         </menu>
-        <window title="G403" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="Mouse LED Colors" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="374" height="131"/>
@@ -712,12 +714,12 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="wCe-zi-VUf"/>
                             <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="wCe-zi-VUf" id="Fqb-hE-n1a">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
                             </binding>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="wCe-zi-VUf"/>
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSK-tl-FsR">
@@ -755,12 +757,12 @@
                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
                             <action selector="wheelColorChanged:" target="Voe-Tx-rLC" id="gML-2u-dTZ"/>
-                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="UmZ-xp-Fi6"/>
                             <binding destination="Voe-Tx-rLC" name="hidden" keyPath="connected" previousBinding="UmZ-xp-Fi6" id="NLP-Ok-4J0">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
                             </binding>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="connected" id="UmZ-xp-Fi6"/>
                         </connections>
                     </colorWell>
                 </subviews>

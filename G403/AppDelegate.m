@@ -16,13 +16,18 @@
 
 static NSString *const kConnectedKey = @"connected";
 
+static NSString *const kLogoColorKey = @"LogoColor";
+static NSString *const kWheelColorKey = @"WheelColor";
+
 typedef NS_ENUM(NSUInteger, G403LEDPosition) {
   G403LEDPositionWheel = 0,
   G403LEDPositionLogo = 1
 };
 
-@interface AppDelegate ()
+@interface AppDelegate () <NSApplicationDelegate>
 @property(nonatomic, weak, readwrite) IBOutlet NSWindow *window;
+@property(nonatomic, weak, readwrite) IBOutlet NSColorWell *logoColorWell;
+@property(nonatomic, weak, readwrite) IBOutlet NSColorWell *wheelColorWell;
 @property(nonatomic, assign, readonly) BOOL connected;
 @end
 
@@ -31,6 +36,24 @@ typedef NS_ENUM(NSUInteger, G403LEDPosition) {
   IOHIDDeviceRef _device;
   NSTimer *_timer;
   G403LEDPosition _lastScheduledUpdatePosition;
+}
+
+static NSColor *_Nullable G403DecodeColor(NSData *_Nullable data) {
+  if (!data) {
+    return nil;
+  }
+  return (NSColor *)[NSKeyedUnarchiver unarchivedObjectOfClass:[NSColor class]
+                                                      fromData:data
+                                                         error:NULL];
+}
+
+static NSData *_Nullable G403EncodeColor(NSColor *_Nullable color) {
+  if (!color) {
+    return nil;
+  }
+  return [NSKeyedArchiver archivedDataWithRootObject:color
+                               requiringSecureCoding:YES
+                                               error:NULL];
 }
 
 static void DeviceMatchingCallback(void *context, IOReturn result, void *sender,
@@ -77,6 +100,13 @@ static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
   if (result != kIOReturnSuccess) {
     NSLog(@"IOHIDManagerOpen failed with error %d\n", result);
   }
+
+  [self _loadColors];
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:
+    (NSApplication *)sender {
+  return YES;
 }
 
 #pragma mark - Properties
@@ -168,6 +198,34 @@ static void DeviceSetReportCallback(void *_Nullable context, IOReturn result,
       &DeviceSetReportCallback, (__bridge void *)self);
   if (result != kIOReturnSuccess) {
     NSLog(@"IOHIDDeviceSetReportWithCallback failed with error %d\n", result);
+  }
+
+  [self _saveColors];
+}
+
+- (void)_saveColors {
+  NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+  [userDefaults setObject:G403EncodeColor(_logoColorWell.color)
+                   forKey:kLogoColorKey];
+  [userDefaults setObject:G403EncodeColor(_wheelColorWell.color)
+                   forKey:kWheelColorKey];
+  [userDefaults synchronize];
+}
+
+- (void)_loadColors {
+  NSUserDefaults *const userDefaults = [NSUserDefaults standardUserDefaults];
+  [userDefaults synchronize];
+
+  NSColor *const logoColor =
+      G403DecodeColor([userDefaults dataForKey:kLogoColorKey]);
+  if (logoColor) {
+    _logoColorWell.color = logoColor;
+  }
+
+  NSColor *const wheelColor =
+      G403DecodeColor([userDefaults dataForKey:kWheelColorKey]);
+  if (wheelColor) {
+    _wheelColorWell.color = wheelColor;
   }
 }
 
